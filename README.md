@@ -1,4 +1,4 @@
-## What is octoml-profile?
+## octoml-profile
 
 octoml-profile is a python library and cloud service
 designed to provide the **simplest experience** for running 

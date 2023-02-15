@@ -100,7 +100,7 @@ deployment goals without "throwing the model over the fence and back".
   ```
 - Install torch2.0
   ```
-  pip install --pre torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/nightly/cpu
+  pip install --pre "torch>=2.0.0dev" "torchvision>=0.15.0.dev" "torchaudio>=2.0.0dev" --extra-index-url https://download.pytorch.org/whl/nightly/cpu
   ```
 - Install octoml-profile
   ```
@@ -325,10 +325,12 @@ Uncompiled segment is run locally once for every invocation. The total
 uncompiled time is summed up and add to the estimated total time (compiled and
 uncompiled).
 
-To print graph breaks, you can use `remote_profile(verbose=True)` or follow the
+To print graph breaks and understand more of what TorchDynamo is doing under the hood, see
+the [dynamo.explain](https://pytorch.org/tutorials/intermediate/dynamo_tutorial.html#torchdynamo-and-fx-graphs)
+and
 [PyTorch
 Troubleshooting](https://pytorch.org/docs/master/dynamo/troubleshooting.html#torchdynamo-troubleshooting)
-page.
+pages.
 
 ## Known issues
 
@@ -337,7 +339,7 @@ When you create a session, you get exclusive access to the requested hardware.
 When there are no hardware available, new session requests will
 be queued.
 
-### Too many subgraphs
+### OOM for large models
 When a function contains too many graph breaks,
 the remote inference worker may run out of GPU memory.
 When it happens, you may get an "Error on loading model component". 
@@ -367,13 +369,4 @@ If you find a broken model, please [file an issue](https://github.com/octoml/oct
 - Slack: [OctoML community slack](https://join.slack.com/t/octoml-community/shared_invite/zt-1p9oeslx1-4tgVpQmM9hvmVzCuxIH3Ug)
 - Github issues: https://github.com/octoml/octoml-profile/issues
 - Email: dynamite@octoml.ai
-
-## Future work
-
-### Deployment (coming soon)
-After benchmarking, you can deploy the application
-using your choice of deployment stack, i.e. docker + k8s,
-with only CPU compute and PyTorch CPU dependency.
-The compute intensive parts of the code will 
-be automatically offloaded to the OctoML Cloud. Stay tuned!
 

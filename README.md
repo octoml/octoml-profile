@@ -79,9 +79,9 @@ deployment goals without "throwing the model over the fence and back".
 
 ## Installation
 
-- If you haven't yet been granted access to [https://app.octoml.ai](https://app.octoml.ai), please send an email to `dynamite@octoml.ai` indicating interest in trying octoml-profile.
+- If you haven't yet been granted access to octoml-profile, please send an email to dynamite@octoml.ai indicating interest in trying octoml-profile.
 
-- Generate an access token at [https://app.octoml.ai](https://app.octoml.ai). Click "Account Dashboard" from your profile icon -> Settings -> generate a token. Set the token as the env var below.
+- Once you have access, generate an access token at https://app.octoml.ai/dynamite. Set the token as the env var below.
   ```
   export OCTOML_PROFILE_API_TOKEN=<access token>
   ```

@@ -7,6 +7,15 @@ PyTorch models on cloud hardware with state-of-the-art ML acceleration technolog
 It is suited for benchmarking PyTorch based AI applications before
 they are deployed into the cloud.
 
+### Documentation quick links
+
+* [Why octoml-profile?](#why-octoml-profile)
+* [Installation](#installation)
+* [Getting started](#getting-started)
+* [Behind the scenes](#behind-the-scenes)
+* [Known issues](#known-issues)
+* [Contact the team](#contact-the-team)
+
 ### Example required code change
 
 ![Distilbert Example](assets/distilbert-diff.png)
@@ -32,16 +41,6 @@ they are deployed into the cloud.
         g4dn.xlarge/onnxrt-cuda  0.279
 
 ```
-
-
-### Documentation quick links
-
-* [Why octoml-profile?](#why-octoml-profile)
-* [Installation](#installation)
-* [Getting started](#getting-started)
-* [Behind the scenes](#behind-the-scenes)
-* [Known issues](#known-issues)
-* [Contact the team](#contact-the-team)
 
 
 ## Why octoml-profile?
@@ -96,8 +95,8 @@ deployment goals without "throwing the model over the fence and back".
 
   or using conda:
   ```
-  conda create -n dynamite python=3.8
-  conda activate dynamite
+  conda create -n octoml python=3.8
+  conda activate octoml
   ```
 - Install torch2.0
   ```
@@ -120,7 +119,8 @@ deployment goals without "throwing the model over the fence and back".
 
 All example code, including applications from `transformers`, can be found at [examples/](examples).
 
-Below is a very simple example that shows how to integrate octoml-profile into your model code.
+Below is a very simple example that shows how to integrate octoml-profile
+into your model code.
 
 ```python
 import torch
@@ -375,5 +375,5 @@ After benchmarking, you can deploy the application
 using your choice of deployment stack, i.e. docker + k8s,
 with only CPU compute and PyTorch CPU dependency.
 The compute intensive parts of the code will 
-be automatically offloaded to Dynamite Cloud. Stay tuned!
+be automatically offloaded to the OctoML Cloud. Stay tuned!
 

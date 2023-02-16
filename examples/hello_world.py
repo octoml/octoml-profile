@@ -14,7 +14,7 @@ def predict(x: torch.Tensor):
     return z
 
 # Alternatively you can also directly use `accelerate`
-# on a model, e.g. `predict = accelerate(model)` which will leave the
+# on a model, e.g. `predict = accelerate(model)` which will leave the 
 # softmax out of remote execution
 
 session = RemoteInferenceSession()

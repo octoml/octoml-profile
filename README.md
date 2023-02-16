@@ -79,7 +79,9 @@ deployment goals without "throwing the model over the fence and back".
 
 ## Installation
 
-- If you haven't yet been granted access to octoml-profile, please send an email to dynamite@octoml.ai indicating interest in trying octoml-profile.
+- We're in beta mode, so if you haven't yet been granted access to octoml-profile,
+  please send an email to dynamite@octoml.ai indicating interest in trying octoml-profile.
+  We plan to fully open up access to the public around mid-late March 2023.
 
 - Once you have access, generate an access token at https://app.octoml.ai/dynamite. Set the token as the env var below.
   ```

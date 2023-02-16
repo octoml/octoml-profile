@@ -41,3 +41,10 @@ instances, configuring software or deploying our code.
 You can use Dynamite directly within your application - whether it be a REST
 API, CLI application or anything else - with your own data and tests.
 
+
+### Model coverage
+
+We are actively working on enabling models like Stable Diffusion and GPT2.
+See the [Known issues section](../README.md#known-issues) for a sense
+of octoml-profile's model coverage surface. If you have a use case that we
+don't currently support, please file an issue and we will prioritize support accordingly.

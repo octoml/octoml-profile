@@ -188,6 +188,7 @@ more examples, see [examples/](examples).
 
 * [How octoml-profile works](#how-octoml-profile-works)
 * [Where `@accelerate` should be applied](#where-accelerate-should-be-applied)
+* [Quota](#quota)
 * [Supported backends](#supported-backends)
 * [Uncompiled segments](#uncompiled-segments)
 
@@ -200,9 +201,8 @@ to extract one or more computation graphs, and offload them to the remote
 inference worker for execution. These are referred to as `compiled code runs`
 in the output.
 
-For code that are note PyTorch computation graph,
-which cannot be offloaded, it runs locally and is shown
-as `uncompiled code run`. For more details on uncompiled code see
+Code that is not PyTorch computation graphs cannot be offloaded -- such code
+runs locally and is shown as `uncompiled code run`. For more details on uncompiled code see
 the [uncompiled segments section](#uncompiled-segments) below.
 
 The `RemoteInferenceSession` is used to reserve
@@ -210,7 +210,7 @@ exclusive hardware access specified in the `backends` parameter.
 If there are multiple backends, they will run in parallel.
 
 The beauty of this example is that the decorator's scope
-can be larger than the scope of PyTorch models, whose boundary
+can be larger than the scope of PyTorch models, whose boundaries
 are difficult to carve out exactly.
 
 The `predict` function may contain pre/post processing code, non tensor logic
@@ -220,7 +220,6 @@ will be intelligently extracted and offloaded for remote execution.
 From a user's perspective the "Total times (compiled + uncompiled) per backend"
 is the best estimation of the runtime of decorated function with the chosen 
 hardware platform and acceleration library.
-
 
 ### Where `@accelerate` should be applied
 In general, `@accelerate` is a drop and replacement for `@torch.compile`
@@ -235,6 +234,12 @@ PyTorch code in the decorated function. This minimizes the chance of hitting
 
 Last but not least, `@accelerate` should not be used to decorate a function
 that already been decorated with `@accelerate` or `@torch.compile`.
+
+### Quota
+
+Each user has a limit on the number of concurrent backends held by the user's sessions.
+If you find yourself hitting quota limits, please ensure you are closing previously held sessions
+with `session.close()`. Otherwise, your session will automatically be closed at script exit.
 
 ### Supported backends
 

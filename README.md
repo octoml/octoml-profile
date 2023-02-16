@@ -222,7 +222,7 @@ is the best estimation of the runtime of decorated function with the chosen
 hardware platform and acceleration library.
 
 ### Where `@accelerate` should be applied
-In general, `@accelerate` is a drop and replacement for `@torch.compile`
+In general, `@accelerate` is a drop-in replacement for `@torch.compile`
 and should be applied to function which contains PyTorch Model that performs inference.
 When the function is called under the context manager of `with remote_profile()`,
 the remote execution and profiling activated. When called without `remote_profile()`

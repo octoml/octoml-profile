@@ -13,12 +13,13 @@ examples = [
 inputs = tokenizer(examples, return_tensors="pt")
 
 
-run_model = accelerate(model)
+model = accelerate(model)
 
 
-session = RemoteInferenceSession()
+session = RemoteInferenceSession(['r6i.large/onnxrt-cpu',
+                                  'r6g.large/onnxrt-cpu'])
 with remote_profile(session):
     for i in range(3):
-        result = run_model(**inputs)
+        result = model(**inputs)
 
 print(result.logits)

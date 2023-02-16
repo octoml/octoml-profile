@@ -127,28 +127,27 @@ into your model code.
 ```python
 import torch
 import torch.nn.functional as F
-from torch.nn import Conv2d, ReLU, Sequential
+from torch.nn import Linear, ReLU, Sequential
 from octoml_profile import (accelerate,
                             remote_profile,
                             RemoteInferenceSession)
 
-model = Sequential(Conv2d(16, 16, 3), ReLU())
+model = Sequential(Linear(100, 200), ReLU(), Linear(200, 10))
 
 @accelerate
 def predict(x: torch.Tensor):
-    print("enter predict function")
     y = model(x)
-    z = F.softmax(y)
-    print("exit predict function")
+    z = F.softmax(y, dim=-1)
     return z
 
 # Alternatively you can also directly use `accelerate`
-# on a model, e.g. `predict = accelerate(model)`
+# on a model, e.g. `predict = accelerate(model)` which will leave the
+# softmax out of remote execution
 
 session = RemoteInferenceSession()
 with remote_profile(session):
-    x = torch.randn(1, 16, 20, 20)
     for i in range(10):
+        x = torch.randn(1, 100)
         predict(x)
 ```
 
@@ -159,18 +158,18 @@ times of the function being executed remotely on each backend.
     Profile 1/1:
     Segment                       Runs  Mean ms  Failures
     =====================================================
-    0  Uncompiled                    9    0.051
+    0  Uncompiled                    9    0.028
 
     1  Graph #1
-        r6i.large/onnxrt-cpu        90    0.037         0
-        g4dn.xlarge/onnxrt-cuda     90    0.135         0
+        r6i.large/onnxrt-cpu        90    0.013         0
+        g4dn.xlarge/onnxrt-cuda     90    0.088         0
 
-    2  Uncompiled                    9    0.094
+    2  Uncompiled                    9    0.013
     -----------------------------------------------------
-    Total uncompiled code run time: 0.145 ms
+    Total uncompiled code run time: 0.042 ms
     Total times (compiled + uncompiled) per backend, ms:
-        r6i.large/onnxrt-cpu     0.182
-        g4dn.xlarge/onnxrt-cuda  0.279
+        r6i.large/onnxrt-cpu     0.055
+        g4dn.xlarge/onnxrt-cuda  0.130
 ```
 You can think of `Graph #1` as the computation graph which captures
 `model` plus `softmax` in the `predict` function. See

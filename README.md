@@ -103,7 +103,7 @@ deployment goals without "throwing the model over the fence and back".
   ```
 - Install torch2.0
   ```
-  pip install --pre "torch>=2.0.0dev" "torchvision>=0.15.0.dev" "torchaudio>=2.0.0dev" --extra-index-url https://download.pytorch.org/whl/nightly/cpu
+  pip install "torch>=2.0.0" "torchvision>=0.15.0" "torchaudio>=2.0.0" --index-url https://download.pytorch.org/whl/test/cpu
   ```
 - Install octoml-profile
   ```

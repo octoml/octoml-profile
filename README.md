@@ -97,23 +97,17 @@ deployment goals without "throwing the model over the fence and back".
 
   or using conda:
   ```
+  # Instructions on installing conda on MacOS: https://docs.conda.io/projects/conda/en/latest/user-guide/install/macos.html
   conda create -n octoml python=3.8
   conda activate octoml
   ```
 - Install torch2.0
   ```
-  pip install --pre "torch>=2.0.0dev" "torchvision>=0.15.0.dev" "torchaudio>=2.0.0dev" --extra-index-url https://download.pytorch.org/whl/nightly/cpu
+  pip install "torch>=2.0.0" "torchvision>=0.15.0" "torchaudio>=2.0.0" --index-url https://download.pytorch.org/whl/test/cpu
   ```
 - Install octoml-profile
   ```
   pip install octoml-profile
-  ```
-
-  If you have MacOS with Apple Silicon (M1), there are a few more  prerequisites:
-  ```
-  # Instructions on installing conda on MacOS: https://docs.conda.io/projects/conda/en/latest/user-guide/install/macos.html
-  conda install onnx=1.12.0
-  pip install grpcio==1.51.1 grpcio-tools==1.48.2
   ```
 
 

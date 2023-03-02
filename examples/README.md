@@ -3,7 +3,7 @@
 For a slightly more complex example than the [simple tutorial example](../README.md#getting-started),
 we can take [the DistilBERT model from
 HuggingFace](https://huggingface.co/distilbert-base-uncased), where we make a
-couple of lines of modification to the example code (`pip install transformers==4.25.0`
+couple of lines of modification to the example code (`pip install transformers==4.25.1`
 is required):
 
 ```python

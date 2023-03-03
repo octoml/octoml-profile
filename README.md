@@ -280,8 +280,8 @@ def function_with_graph_breaks(x):
     time.sleep(1) # Uncompiled segment 4
     return x
 
-sess = RemoteInferenceSession('r6i.large/onnxrt-cuda')
-with remote_profile():
+sess = RemoteInferenceSession('r6i.large/onnxrt-cpu')
+with remote_profile(sess):
     for _ in range(2):
         function_with_graph_breaks(torch.tensor(1.))
 ```
@@ -293,12 +293,12 @@ Profile 1/1:
 0  Uncompiled             1  1001.051
 
 1  Graph #1
-     local/onnxrt-cpu    10     0.007         0
+     r6i.large/onnxrt-cpu 10     0.007         0
 
 2  Uncompiled             1   100.150
 
 3  Graph #2
-     local/onnxrt-cpu    10     0.007         0
+     r6i.large/onnxrt-cpu 10     0.007         0
 
 4  Uncompiled             1  1000.766
 -----------------------------------------------

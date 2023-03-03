@@ -271,6 +271,7 @@ It's easier to illustrate using an example
 import torch.nn.functional as F
 import time
 
+@accelerate
 def function_with_graph_breaks(x):
     time.sleep(1) # Uncompiled segment 0
     x = F.relu(x) # graph #1, segment 1

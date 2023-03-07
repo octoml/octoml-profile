@@ -222,6 +222,9 @@ When the function is called under the context manager of `with remote_profile()`
 the remote execution and profiling activated. When called without `remote_profile()`
 it behaves just as TorchDynamo.
 
+If you expect the input shape to change especially for generative models,
+try `@accelerate(dynamic=True)`.
+
 By default, `torch.no_grad()` is set in the remote_profile context to minimize usage of non
 PyTorch code in the decorated function. This minimizes the chance of hitting
 `TorchDynamoInternalError`.
@@ -344,19 +347,9 @@ be queued.
 When a function contains too many graph breaks,
 the remote inference worker may run out of GPU memory.
 When it happens, you may get an "Error on loading model component". 
-This is known to happen with models like GPT2 and Stable Diffusion.
+This is known to happen with models like Stable Diffusion.
 We are actively working on optimizing the memory allocation of 
 many subgraphs.
-
-### Dynamic shapes
-When running inference with different shapes of inputs, i.e. dynamic
-batch size or sequence length, each new shape will create new PyTorch 
-graphs which trigger multiple graph uploads, each with static input shapes.
-Like the "many graph" scenarios above, it can lead to less pleasant user
-experience for benchmarking and unrealistic situation for deployment.
-
-We are actively tracking the status of Torch2.0 symbolic shape branch
-and will improve support for dynamic shapes in future releases.
 
 ### Limitations of TorchDynamo 
 TorchDynamo is under active development. You may encounter
@@ -370,4 +363,3 @@ If you find a broken model, please [file an issue](https://github.com/octoml/oct
 - Slack: [OctoML community slack](https://join.slack.com/t/octoml-community/shared_invite/zt-1p9oeslx1-4tgVpQmM9hvmVzCuxIH3Ug)
 - Github issues: https://github.com/octoml/octoml-profile/issues
 - Email: dynamite@octoml.ai
-

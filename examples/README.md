@@ -44,7 +44,10 @@ API, CLI application or anything else - with your own data and tests.
 
 ### Model coverage
 
-We are actively working on enabling models like Stable Diffusion and GPT2.
+We've enabled dynamic graph capture with `@accelerate(dynamic=True)`. See the
+generative model [t5.py](t5.py) as an example.
+
+We are actively working on enabling models like Stable Diffusion.
 See the [Known issues section](../README.md#known-issues) for a sense
 of octoml-profile's model coverage surface. If you have a use case that we
 don't currently support, please file an issue and we will prioritize support accordingly.

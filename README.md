@@ -227,7 +227,7 @@ PyTorch code in the decorated function. This minimizes the chance of hitting
 `TorchDynamoInternalError`.
 
 Last but not least, `@accelerate` should not be used to decorate a function
-that already been decorated with `@accelerate` or `@torch.compile`.
+that has already been decorated with `@accelerate` or `@torch.compile`.
 
 ### Quota
 

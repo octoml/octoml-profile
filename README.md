@@ -182,6 +182,7 @@ more examples, see [examples/](examples).
 
 * [How octoml-profile works](#how-octoml-profile-works)
 * [Where `@accelerate` should be applied](#where-accelerate-should-be-applied)
+* [The profile report](#the-profile-report)
 * [Quota](#quota)
 * [Supported backends](#supported-backends)
 * [Uncompiled segments](#uncompiled-segments)
@@ -231,6 +232,54 @@ PyTorch code in the decorated function. This minimizes the chance of hitting
 
 Last but not least, `@accelerate` should not be used to decorate a function
 that already been decorated with `@accelerate` or `@torch.compile`.
+
+### The profile report
+
+By default, the `Profile` report table will show the linear sequence of subgraph segment runs.
+
+However, when too many subgraphs are run, subgraph exeuction segments are aggregated per
+subgraph, and a few subgraphs that have the highest aggregate runtimes are shown.
+For example, a generative encoder-decoder based model that produces a large number of
+run segments will display an abridged report displaying 
+**runtime by subgraph** instead of **runtime by segment** by default.
+In cases like this, you'll see:
+
+```
+Profile 1/1:
+   Segment                Runs  Mean ms  Failures
+=================================================
+
+0  Graph #9             
+     ryzen9/onnxrt-cpu     190    3.929         0
+     rtx3060/onnxrt-cuda   190    1.752         0
+
+
+1  Graph #4             
+     ryzen9/onnxrt-cpu      10    5.011         0
+     rtx3060/onnxrt-cuda    10    1.524         0
+
+
+2  Graph #7             
+     ryzen9/onnxrt-cpu      10    3.715         0
+     rtx3060/onnxrt-cuda    10    1.437         0
+
+-------------------------------------------------
+
+9 total graphs were compiled
+66 total compiled segments were run (a graph can run in multiple segments)
+More than 3 compiled segments were run, so only graphs with the highest aggregate runtimes are shown.
+```
+
+Other graphs are hidden. If your output has been abridged in this way
+but you want to see the full, sequential results of your profiling run, you can print
+the report with `verbose`:
+
+```python
+# print_results_to=None silences the default output profile report.
+with remote_profile(print_results_to=None) as prof:
+    ...
+prof.report().print(verbose=True)
+```
 
 ### Quota
 

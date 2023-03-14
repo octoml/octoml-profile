@@ -13,6 +13,7 @@ they are deployed into the cloud.
 * [Installation](#installation)
 * [Getting started](#getting-started)
 * [Behind the scenes](#behind-the-scenes)
+* [Data privacy](#data-privacy)
 * [Known issues](#known-issues)
 * [Contact the team](#contact-the-team)
 
@@ -186,6 +187,7 @@ more examples, see [examples/](examples).
 * [Quota](#quota)
 * [Supported backends](#supported-backends)
 * [Uncompiled segments](#uncompiled-segments)
+* [Experimental features](#experimental-features)
 
 ### How octoml-profile works
 
@@ -224,7 +226,7 @@ the remote execution and profiling activated. When called without `remote_profil
 it behaves just as TorchDynamo.
 
 If you expect the input shape to change especially for generative models,
-try `@accelerate(dynamic=True)`.
+see [Experimental features](#experimental-features).
 
 By default, `torch.no_grad()` is set in the remote_profile context to minimize usage of non
 PyTorch code in the decorated function. This minimizes the chance of hitting
@@ -384,6 +386,42 @@ and
 [PyTorch
 Troubleshooting](https://pytorch.org/docs/master/dynamo/troubleshooting.html#torchdynamo-troubleshooting)
 pages.
+
+### Experimental features
+
+**dynamic shapes**
+
+This feature is still under active development, so your results may vary. There are known bugs with using
+dynamic shapes with the torch eager and inductor backends. To use this experimental feature, please install
+a version of nightly torch more recent than 20230307.
+
+```
+pip install --pre "torch>=2.0.0dev" "torchvision>=0.15.0.dev" "torchaudio>=2.0.0dev" --extra-index-url https://download.pytorch.org/whl/nightly/cpu
+```
+
+Set `@accelerate(dynamic=True)` on any `accelerate` usage.
+
+## Data privacy
+
+We know that keeping your model data private is important to you. We guarantee that no other
+user has access to your data. We do not scrape any model information internally, and we do not use
+your uploaded data to try to improve our system -- we rely on you filing github issues or otherwise
+contacting us to understand your use case, and anything else about your model.
+Here's how our system currently works.
+
+We leverage TorchDynamo's subgraph capture to identify Pytorch-only code, serialize those subgraphs,
+and upload them to our system for benchmark.
+
+On model upload, we cache your model in AWS S3. This helps with your development iteration speed --
+every subsequent time you want profiling results, you won't have to wait for model re-upload on every
+minor tweak to your model or update to your requested backends list. When untouched for four weeks,
+any model subgraphs and constants are automatically removed from S3.
+
+Your model subgraphs are loaded onto our remote workers and are cleaned up on the creation of
+every subsequent session. Between your session's closure and another session's startup,
+serialized subgraphs may lie around idle. No users can access these subgraphs in this interval.
+
+If you still have concerns around data privacy, please [contact the team](#contact-the-team).
 
 ## Known issues
 

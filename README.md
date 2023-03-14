@@ -13,6 +13,7 @@ they are deployed into the cloud.
 * [Installation](#installation)
 * [Getting started](#getting-started)
 * [Behind the scenes](#behind-the-scenes)
+* [Data privacy](#data-privacy)
 * [Known issues](#known-issues)
 * [Contact the team](#contact-the-team)
 
@@ -182,9 +183,11 @@ more examples, see [examples/](examples).
 
 * [How octoml-profile works](#how-octoml-profile-works)
 * [Where `@accelerate` should be applied](#where-accelerate-should-be-applied)
+* [The profile report](#the-profile-report)
 * [Quota](#quota)
 * [Supported backends](#supported-backends)
 * [Uncompiled segments](#uncompiled-segments)
+* [Experimental features](#experimental-features)
 
 ### How octoml-profile works
 
@@ -222,12 +225,63 @@ When the function is called under the context manager of `with remote_profile()`
 the remote execution and profiling activated. When called without `remote_profile()`
 it behaves just as TorchDynamo.
 
+If you expect the input shape to change especially for generative models,
+see [Experimental features](#experimental-features).
+
 By default, `torch.no_grad()` is set in the remote_profile context to minimize usage of non
 PyTorch code in the decorated function. This minimizes the chance of hitting
 `TorchDynamoInternalError`.
 
 Last but not least, `@accelerate` should not be used to decorate a function
 that has already been decorated with `@accelerate` or `@torch.compile`.
+
+### The profile report
+
+By default, the `Profile` report table will show the linear sequence of subgraph segment runs.
+
+However, when too many subgraphs are run, subgraph exeuction segments are aggregated per
+subgraph, and a few subgraphs that have the highest aggregate runtimes are shown.
+For example, a generative encoder-decoder based model that produces a large number of
+run segments will display an abridged report displaying 
+**runtime by subgraph** instead of **runtime by segment** by default.
+In cases like this, you'll see:
+
+```
+Profile 1/1:
+   Segment                Runs  Mean ms  Failures
+=================================================
+
+0  Graph #9             
+     ryzen9/onnxrt-cpu     190    3.929         0
+     rtx3060/onnxrt-cuda   190    1.752         0
+
+
+1  Graph #4             
+     ryzen9/onnxrt-cpu      10    5.011         0
+     rtx3060/onnxrt-cuda    10    1.524         0
+
+
+2  Graph #7             
+     ryzen9/onnxrt-cpu      10    3.715         0
+     rtx3060/onnxrt-cuda    10    1.437         0
+
+-------------------------------------------------
+
+9 total graphs were compiled
+66 total compiled segments were run (a graph can run in multiple segments)
+More than 3 compiled segments were run, so only graphs with the highest aggregate runtimes are shown.
+```
+
+Other graphs are hidden. If your output has been abridged in this way
+but you want to see the full, sequential results of your profiling run, you can print
+the report with `verbose`:
+
+```python
+# print_results_to=None silences the default output profile report.
+with remote_profile(print_results_to=None) as prof:
+    ...
+prof.report().print(verbose=True)
+```
 
 ### Quota
 
@@ -333,6 +387,42 @@ and
 Troubleshooting](https://pytorch.org/docs/master/dynamo/troubleshooting.html#torchdynamo-troubleshooting)
 pages.
 
+### Experimental features
+
+**dynamic shapes**
+
+This feature is still under active development, so your results may vary. There are known bugs with using
+dynamic shapes with the torch eager and inductor backends. To use this experimental feature, please install
+a version of nightly torch more recent than 20230307.
+
+```
+pip install --pre "torch>=2.0.0dev" "torchvision>=0.15.0.dev" "torchaudio>=2.0.0dev" --extra-index-url https://download.pytorch.org/whl/nightly/cpu
+```
+
+Set `@accelerate(dynamic=True)` on any `accelerate` usage.
+
+## Data privacy
+
+We know that keeping your model data private is important to you. We guarantee that no other
+user has access to your data. We do not scrape any model information internally, and we do not use
+your uploaded data to try to improve our system -- we rely on you filing github issues or otherwise
+contacting us to understand your use case, and anything else about your model.
+Here's how our system currently works.
+
+We leverage TorchDynamo's subgraph capture to identify Pytorch-only code, serialize those subgraphs,
+and upload them to our system for benchmark.
+
+On model upload, we cache your model in AWS S3. This helps with your development iteration speed --
+every subsequent time you want profiling results, you won't have to wait for model re-upload on every
+minor tweak to your model or update to your requested backends list. When untouched for four weeks,
+any model subgraphs and constants are automatically removed from S3.
+
+Your model subgraphs are loaded onto our remote workers and are cleaned up on the creation of
+every subsequent session. Between your session's closure and another session's startup,
+serialized subgraphs may lie around idle. No users can access these subgraphs in this interval.
+
+If you still have concerns around data privacy, please [contact the team](#contact-the-team).
+
 ## Known issues
 
 ### Waiting for Session
@@ -344,19 +434,9 @@ be queued.
 When a function contains too many graph breaks,
 the remote inference worker may run out of GPU memory.
 When it happens, you may get an "Error on loading model component". 
-This is known to happen with models like GPT2 and Stable Diffusion.
+This is known to happen with models like Stable Diffusion.
 We are actively working on optimizing the memory allocation of 
 many subgraphs.
-
-### Dynamic shapes
-When running inference with different shapes of inputs, i.e. dynamic
-batch size or sequence length, each new shape will create new PyTorch 
-graphs which trigger multiple graph uploads, each with static input shapes.
-Like the "many graph" scenarios above, it can lead to less pleasant user
-experience for benchmarking and unrealistic situation for deployment.
-
-We are actively tracking the status of Torch2.0 symbolic shape branch
-and will improve support for dynamic shapes in future releases.
 
 ### Limitations of TorchDynamo 
 TorchDynamo is under active development. You may encounter
@@ -370,4 +450,3 @@ If you find a broken model, please [file an issue](https://github.com/octoml/oct
 - Slack: [OctoML community slack](https://join.slack.com/t/octoml-community/shared_invite/zt-1p9oeslx1-4tgVpQmM9hvmVzCuxIH3Ug)
 - Github issues: https://github.com/octoml/octoml-profile/issues
 - Email: dynamite@octoml.ai
-

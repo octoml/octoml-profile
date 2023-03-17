@@ -102,9 +102,13 @@ deployment goals without "throwing the model over the fence and back".
   conda create -n octoml python=3.8
   conda activate octoml
   ```
-- Install torch2.0
+- Install torch2.0 stable version
   ```
-  pip install "torch>=2.0.0" "torchvision>=0.15.0" "torchaudio>=2.0.0" --index-url https://download.pytorch.org/whl/test/cpu
+  pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
+  ```
+  Alternatively, install torch-nightly if you want to use the experimental dynamic shape feature.
+  ```
+  pip install --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/cpu
   ```
 - Install octoml-profile
   ```

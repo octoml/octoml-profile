@@ -447,6 +447,6 @@ will continue to improve its coverage.
 If you find a broken model, please [file an issue](https://github.com/octoml/octoml-profile/issues).
 
 ## Contact the team
-- Slack: [OctoML community slack](https://join.slack.com/t/octoml-community/shared_invite/zt-1p9oeslx1-4tgVpQmM9hvmVzCuxIH3Ug)
+- Discord: [OctoML community Discord](https://discord.gg/Quc8hSxpMe)
 - Github issues: https://github.com/octoml/octoml-profile/issues
 - Email: dynamite@octoml.ai

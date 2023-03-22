@@ -24,23 +24,27 @@ they are deployed into the cloud.
 ### Example results
 
 ```
-    Runs discarded because compilation occurred: 1
-    Profile 1/1:
-    Segment                       Runs  Mean ms  Failures
-    =====================================================
-    0  Uncompiled                    9    0.051
+Profile 1/1 ran 2 times with 10 repeats per call:
+   Segment                  Samples  Avg ms  Failures
+=====================================================
+0  Uncompiled                     2   5.678
 
-    1  Graph #1
-        r6i.large/onnxrt-cpu        90    0.037         0
-        g4dn.xlarge/onnxrt-cuda     90    0.135         0
+1  Graph #1               
+     r6i.large/onnxrt-cpu        20  11.860         0
+     g5.xlarge/onnxrt-cuda       20   1.136         0
 
-    2  Uncompiled                    9    0.094
-    -----------------------------------------------------
-    Total uncompiled code run time: 0.145 ms
-    Total times (compiled + uncompiled) per backend, ms:
-        r6i.large/onnxrt-cpu     0.182
-        g4dn.xlarge/onnxrt-cuda  0.279
+2  Uncompiled                     2   0.152
 
+3  Graph #2               
+     r6i.large/onnxrt-cpu        20   0.007         0
+     g5.xlarge/onnxrt-cuda       20   0.064         0
+
+4  Uncompiled                     2   0.096
+-----------------------------------------------------
+Total uncompiled code run time: 5.926 ms
+Total times (compiled + uncompiled) and on-demand cost per million inferences per backend:
+    r6i.large/onnxrt-cpu (Intel Ice Lake)  17.793ms  $0.62
+    g5.xlarge/onnxrt-cuda (Nvidia A10g)     7.126ms  $1.99
 ```
 
 
@@ -80,39 +84,43 @@ deployment goals without "throwing the model over the fence and back".
 
 ## Installation
 
-- We're in beta mode, so if you haven't yet been granted access to octoml-profile,
-  please send an email to dynamite@octoml.ai indicating interest in trying octoml-profile.
-  We plan to fully open up access to the public around mid-late March 2023.
-
-- Once you have access, generate an access token at https://app.octoml.ai/dynamite. Set the token as the env var below.
+- Follow this [link](https://f9rhhjxkii.execute-api.us-west-2.amazonaws.com) to signup and generate an API token and set the token as the env var below.
   ```
   export OCTOML_PROFILE_API_TOKEN=<access token>
   ```
+
 - Create and activate a python virtual environment. Make sure that you are using python3.8.
 
+  [Linux]
   using virtualenv:
   ```
-  python3.8 -m venv env
+  python3 -m venv env
   . env/bin/activate
   ```
 
-  or using conda:
+  [MacOS]
+  using conda:
   ```
   # Instructions on installing conda on MacOS: https://docs.conda.io/projects/conda/en/latest/user-guide/install/macos.html
+  # Choose the Miniconda Installer for you Mac architecture.
+
   conda create -n octoml python=3.8
   conda activate octoml
   ```
+
 - Install torch2.0 stable version
   ```
   pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
   ```
-  Alternatively, install torch-nightly if you want to use the experimental dynamic shape feature.
+
+  To use [dynamic shape](#dynamic-shapes), install torch-nightly instead.
   ```
-  pip install --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/cpu
+  pip install --pre torch==2.1.0.dev20230307 torchaudio==2.0.0.dev20230307 torchvision==0.15.0.dev20230307 --index-url https://download.pytorch.org/whl/nightly/cpu
   ```
+
 - Install octoml-profile
   ```
-  pip install octoml-profile
+  pip install "octoml-profile>=0.2.0"
   ```
 
 
@@ -127,9 +135,7 @@ into your model code.
 import torch
 import torch.nn.functional as F
 from torch.nn import Linear, ReLU, Sequential
-from octoml_profile import (accelerate,
-                            remote_profile,
-                            RemoteInferenceSession)
+from octoml_profile import accelerate, remote_profile
 
 model = Sequential(Linear(100, 200), ReLU(), Linear(200, 10))
 
@@ -143,8 +149,7 @@ def predict(x: torch.Tensor):
 # on a model, e.g. `predict = accelerate(model)` which will leave the
 # softmax out of remote execution
 
-session = RemoteInferenceSession()
-with remote_profile(session):
+with remote_profile():
     for i in range(10):
         x = torch.randn(1, 100)
         predict(x)
@@ -153,22 +158,23 @@ with remote_profile(session):
 Running this program results in the following output that shows 
 times of the function being executed remotely on each backend.
 ```
-    Runs discarded because compilation occurred: 1
-    Profile 1/1:
-    Segment                       Runs  Mean ms  Failures
-    =====================================================
-    0  Uncompiled                    9    0.028
+Profile 1/1 ran 9 times with 10 repeats per call:
+   Segment                            Samples  Avg ms  Failures
+===============================================================
+0  Uncompiled                               9   0.020
 
-    1  Graph #1
-        r6i.large/onnxrt-cpu        90    0.013         0
-        g4dn.xlarge/onnxrt-cuda     90    0.088         0
+1  Graph #1                         
+     r6i.large/torch-eager-cpu             90   0.037         0
+     g4dn.xlarge/torch-eager-cuda          90   0.135         0
+     g4dn.xlarge/torch-inductor-cuda       90   0.236         0
 
-    2  Uncompiled                    9    0.013
-    -----------------------------------------------------
-    Total uncompiled code run time: 0.042 ms
-    Total times (compiled + uncompiled) per backend, ms:
-        r6i.large/onnxrt-cpu     0.055
-        g4dn.xlarge/onnxrt-cuda  0.130
+2  Uncompiled                               9   0.010
+---------------------------------------------------------------
+Total uncompiled code run time: 0.029 ms
+Total times (compiled + uncompiled) and on-demand cost per million inferences per backend:
+    r6i.large/torch-eager-cpu (Intel Ice Lake)   0.066ms  $0.00
+    g4dn.xlarge/torch-eager-cuda (Nvidia T4)     0.165ms  $0.02
+    g4dn.xlarge/torch-inductor-cuda (Nvidia T4)  0.265ms  $0.04
 ```
 You can think of `Graph #1` as the computation graph which captures
 `model` plus `softmax` in the `predict` function. See
@@ -188,26 +194,33 @@ more examples, see [examples/](examples).
 * [How octoml-profile works](#how-octoml-profile-works)
 * [Where `@accelerate` should be applied](#where-accelerate-should-be-applied)
 * [The profile report](#the-profile-report)
+* [Dynamic shapes](#dynamic-shapes)
 * [Quota](#quota)
 * [Supported backends](#supported-backends)
 * [Uncompiled segments](#uncompiled-segments)
-* [Experimental features](#experimental-features)
 
 ### How octoml-profile works
 
 In the example above, we first decorate the `predict` function with the
-`@accelerate` decorator. Whenever the function is executed, the decorator uses
-[Torch Dynamo](https://pytorch.org/tutorials/intermediate/dynamo_tutorial.html)
-to extract one or more computation graphs, and offload them to the remote
-inference worker for execution. These are referred to as `compiled code runs`
-in the output.
+`@accelerate` decorator. The behavior of this decorator depends on the context.
+By default, it behaves like `@torch.compile`:
+[Torch Dynamo](https://pytorch.org/tutorials/intermediate/dynamo_tutorial.html) is used
+to extract one or more computation graphs, optimize them, and replace the bytecode
+inside the function with the optimized version. 
 
-Code that is not PyTorch computation graphs cannot be offloaded -- such code
-runs locally and is shown as `uncompiled code run`. For more details on uncompiled code see
+When the code is surrounded with `remote_profile()` context manager, the behavior
+of the `@accelerate` decorator changes. Instead of running the extracted graphs
+on the local machine, the graphs are sent to one or more remote inference workers
+for execution and measurement. These offloaded graphs are referred to as "compiled segments"
+in the output above.
+
+Code that cannot be captured as a computation graph is not offloaded -- such code
+runs locally and is shown as "uncompiled segments". For more details on uncompiled code see
 the [uncompiled segments section](#uncompiled-segments) below.
 
-The `RemoteInferenceSession` is used to reserve
-exclusive hardware access specified in the `backends` parameter.
+When the `remote_profile()` context manager is entered, it reserves
+exclusive access to hardware specified in the optional `backends` keyword argument
+(or to a set of default hardware targets if the argument is omitted).
 If there are multiple backends, they will run in parallel.
 
 The beauty of this example is that the decorator's scope
@@ -230,7 +243,7 @@ the remote execution and profiling activated. When called without `remote_profil
 it behaves just as TorchDynamo.
 
 If you expect the input shape to change especially for generative models,
-see [Experimental features](#experimental-features).
+see [Dynamic Shapes](#dynamic-shapes).
 
 By default, `torch.no_grad()` is set in the remote_profile context to minimize usage of non
 PyTorch code in the decorated function. This minimizes the chance of hitting
@@ -251,30 +264,37 @@ run segments will display an abridged report displaying
 In cases like this, you'll see:
 
 ```
-Profile 1/1:
-   Segment                Runs  Mean ms  Failures
-=================================================
+Profile 1/1 ran 1 time with 10 repeats per call:
+Top subgraph               Avg ms/call  Avg ms/run  Runtime % of e2e  Failures
+==============================================================================
+Graph #7 (17 calls)      
+  r6i.large/onnxrt-cpu          36.979     628.645              70.2         0
+  g4dn.xlarge/onnxrt-cuda        5.612      95.403              37.9         0
 
-0  Graph #9             
-     ryzen9/onnxrt-cpu     190    3.929         0
-     rtx3060/onnxrt-cuda   190    1.752         0
+Graph #4 (1 calls)       
+  r6i.large/onnxrt-cpu          43.823      43.823               4.9         0
+  g4dn.xlarge/onnxrt-cuda        5.002       5.002               2.0         0
 
+Graph #2 (1 calls)       
+  r6i.large/onnxrt-cpu          43.357      43.357               4.8         0
+  g4dn.xlarge/onnxrt-cuda        3.154       3.154               1.3         0
 
-1  Graph #4             
-     ryzen9/onnxrt-cpu      10    5.011         0
-     rtx3060/onnxrt-cuda    10    1.524         0
+4 other subgraphs        
+  r6i.large/onnxrt-cpu                      35.892               4.0         0
+  g4dn.xlarge/onnxrt-cuda                    4.833               1.9         0
 
-
-2  Graph #7             
-     ryzen9/onnxrt-cpu      10    3.715         0
-     rtx3060/onnxrt-cuda    10    1.437         0
-
--------------------------------------------------
-
-9 total graphs were compiled
-66 total compiled segments were run (a graph can run in multiple segments)
-More than 3 compiled segments were run, so only graphs with the highest aggregate runtimes are shown.
+42 uncompiled segments                     143.621
+------------------------------------------------------------------------------
+Total uncompiled code run time: 143.621 ms
+Total times (compiled + uncompiled) and on-demand cost per million inferences per backend:
+    r6i.large/onnxrt-cpu (Intel Ice Lake)  895.338ms  $31.34
+    g4dn.xlarge/onnxrt-cuda (Nvidia T4)    252.012ms  $36.82
 ```
+
+Terminology:
+- `run` is one full end-to-end execution of an `@accelerate`-decorated function
+- `call` is one execution of a subgraph
+- `repeats` is the number of times a subgraph is measured on a remote backend for each call
 
 Other graphs are hidden. If your output has been abridged in this way
 but you want to see the full, sequential results of your profiling run, you can print
@@ -287,6 +307,57 @@ with remote_profile(print_results_to=None) as prof:
 prof.report().print(verbose=True)
 ```
 
+### Dynamic shapes
+
+This is an experimental feature.
+
+By default, the `@accelerate` decorator will recompile a new graph if the input
+shapes to the graph is changed. For sequence to sequence use cases such as text
+generation, it is inefficient to have to compile a separate model for each
+possible intermediate sequence length and the amount of graphs will quickly
+cause the backend worker to run out of memory. The solution is to turn on
+"dynamic-shapes" for the compiler,
+which means the graph compiliation will be agnostic to the input shapes,
+resulting in drastically fewer graphs to be compiled and lower memory to run
+end to end.
+
+As an toy example:
+
+```python
+import torch
+from octoml_profile import accelerate, remote_profile
+
+conv = torch.nn.Conv2d(16, 16, 3)
+
+# With `dynamic=True` any model inside will not be specialized to the input shape
+@accelerate(dynamic=True)
+def predict(x: torch.Tensor):
+    return conv(x)
+
+with remote_profile(backends=["r6i.large/onnxrt-cpu"]):
+    for i in range(5):
+        predict(torch.randn(3, 16, 10, 10))
+        # batch size is different
+        # with `dynamic=True` we will not recompile a different conv graph
+        predict(torch.randn(4, 16, 10, 10))
+```
+
+This feature is still under active development by the PyTorch team, so your
+results may vary. There are known bugs with using dynamic shapes with the torch
+eager and inductor backends. To use this experimental feature, please install a
+version of nightly torch. We recommend using version 20230307:
+
+```
+pip install --pre torch==2.1.0.dev20230307 torchaudio==2.0.0.dev20230307 torchvision==0.16.0.dev20230307 --index-url https://download.pytorch.org/whl/nightly/cpu
+```
+
+Set `@accelerate(dynamic=True)` on any `accelerate` usage.
+*Important*: we recommend only using ONNXRuntime backends (`onnxrt-cpu`, `onnxrt-cuda`,
+`onnxrt-tensorrt`) with `dynamic=True` because of known bugs in `torch-eager-*`
+and `torch-inductor-*` backends.
+
+
+
 ### Quota
 
 Each user has a limit on the number of concurrent backends held by the user's sessions.
@@ -298,7 +369,8 @@ with `session.close()`. Otherwise, your session will automatically be closed at 
 To programmatically access a list of supported backends, please invoke:
 
 ```python
-RemoteInferenceSession().print_supported_backends()
+import octoml_profile
+print(octoml_profile.get_supported_backends())
 ```
 
 **Supported Cloud Hardware**
@@ -307,7 +379,7 @@ AWS
 - g4dn.xlarge (Nvidia T4 GPU)
 - g5.xlarge  (Nvidia A10g GPU)
 - r6i.large (Intel Xeon IceLake CPU)
-- r6g.large (Arm based Graviton2 CPU)
+- r7g.large (Arm based Graviton3 CPU)
 
 **Supported Acceleration Libraries**
 
@@ -316,7 +388,15 @@ ONNXRuntime
 - onnxrt-cuda
 - onnxrt-tensorrt
 
-If no backends are specified while creating the `RemoteInferenceSession(backends: List[str])`, the default backends `g4dn.xlarge/onnxrt-cuda` and `r6i.large/onnxrt-cpu` are used for the session.
+PyTorch
+- torch-eager-cpu
+- torch-eager-cuda
+- torch-inductor-cpu
+- torch-inductor-cuda
+
+If no backends are specified while calling `remote_profile()`, then defaults are used,
+which are determined by the server. At the moment of writing, the default is
+`["r6i.large/torch-eager-cpu", "g4dn.xlarge/torch-eager-cuda", "g4dn.xlarge/torch-inductor-cuda"]`.
 
 ### Uncompiled segments
 
@@ -328,6 +408,8 @@ It's easier to illustrate using an example
 ```python
 import torch.nn.functional as F
 import time
+import torch
+from octoml_profile import accelerate, remote_profile
 
 @accelerate
 def function_with_graph_breaks(x):
@@ -339,8 +421,7 @@ def function_with_graph_breaks(x):
     time.sleep(1) # Uncompiled segment 4
     return x
 
-sess = RemoteInferenceSession('r6i.large/onnxrt-cpu')
-with remote_profile(sess):
+with remote_profile(backends=['r6i.large/onnxrt-cpu']):
     for _ in range(2):
         function_with_graph_breaks(torch.tensor(1.))
 ```
@@ -391,19 +472,6 @@ and
 Troubleshooting](https://pytorch.org/docs/master/dynamo/troubleshooting.html#torchdynamo-troubleshooting)
 pages.
 
-### Experimental features
-
-**dynamic shapes**
-
-This feature is still under active development, so your results may vary. There are known bugs with using
-dynamic shapes with the torch eager and inductor backends. To use this experimental feature, please install
-a version of nightly torch more recent than 20230307.
-
-```
-pip install --pre "torch>=2.0.0dev" "torchvision>=0.15.0.dev" "torchaudio>=2.0.0dev" --extra-index-url https://download.pytorch.org/whl/nightly/cpu
-```
-
-Set `@accelerate(dynamic=True)` on any `accelerate` usage.
 
 ## Data privacy
 
@@ -435,8 +503,9 @@ When there are no hardware available, new session requests will
 be queued.
 
 ### OOM for large models
-When a function contains too many graph breaks,
-the remote inference worker may run out of GPU memory.
+When a function contains too many graph breaks or individual
+graph excceds the memory on the worker,
+the remote inference worker may run out of CPU/GPU memory.
 When it happens, you may get an "Error on loading model component". 
 This is known to happen with models like Stable Diffusion.
 We are actively working on optimizing the memory allocation of 
@@ -444,8 +513,7 @@ many subgraphs.
 
 ### Limitations of TorchDynamo 
 TorchDynamo is under active development. You may encounter
-errors that are TorchDynamo related. For instance,
-we found that TorchDynamo does not support `Ultralytics/Yolov5`.
+errors that are TorchDynamo related.
 These should not be fundamental problems as we believe TorchDynamo
 will continue to improve its coverage.
 If you find a broken model, please [file an issue](https://github.com/octoml/octoml-profile/issues).

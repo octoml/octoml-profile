@@ -1,11 +1,10 @@
 ## octoml-profile
 
 octoml-profile is a python library and cloud service
-designed to provide the **simplest experience** for running 
-PyTorch models on cloud hardware with state-of-the-art ML acceleration technology.
+designed to provide the **simplest experience** for assessing and optimizing the performance of PyTorch models on cloud hardware with state-of-the-art ML acceleration technology.
 
 It is suited for benchmarking PyTorch based AI applications before
-they are deployed into the cloud.
+they are deployed into production.
 
 ### Documentation quick links
 
@@ -58,7 +57,7 @@ variety of different hardware and apply state-of-the-art ML acceleration
 techniques, all from your development machine, using the same data and workflow used for
 training and experiment tracking, without tracing or exporting the model!
 
-With just a few lines of code change and  running the code locally,
+Apply just a few code changes and run the code locally, and
 you instantly get performance feedback on your model's compute-intensive
 tensor operations
 
@@ -68,7 +67,7 @@ tensor operations
 
 but without the burden of
 
-- exporting the models and stitch them back with pre/post processing code
+- exporting the models and stitching them back with pre/post processing code
 - provisioning the hardware
 - preparing the hardware specific dependencies, i.e. the version of PyTorch, Cuda, TensorRT etc.
 - sending the model and data to each hardware and running the benchmarking script
@@ -80,11 +79,9 @@ deployment goals without "throwing the model over the fence and back".
 
 ## Installation
 
-- We're in beta mode, so if you haven't yet been granted access to octoml-profile,
-  please send an email to dynamite@octoml.ai indicating interest in trying octoml-profile.
-  We plan to fully open up access to the public around mid-late March 2023.
+- You can create a login and generate an API token by going to profiler.app.octoml.ai
 
-- Once you have access, generate an access token at https://app.octoml.ai/dynamite. Set the token as the env var below.
+- Once you have your token, set it as the env var below.
   ```
   export OCTOML_PROFILE_API_TOKEN=<access token>
   ```

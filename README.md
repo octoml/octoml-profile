@@ -26,26 +26,32 @@ they are deployed into production.
 
 ```
 Profile 1/1 ran 2 times with 10 repeats per call:
-   Segment                  Samples  Avg ms  Failures
-=====================================================
-0  Uncompiled                     2   5.678
+   Segment                            Samples  Avg ms  Failures
+===============================================================
+0  Uncompiled                               2   3.996
 
-1  Graph #1               
-     r6i.large/onnxrt-cpu        20  11.860         0
-     g5.xlarge/onnxrt-cuda       20   1.136         0
+1  Graph #1                         
+     r6i.large/torch-eager-cpu             20  34.702         0
+     g4dn.xlarge/torch-eager-cuda          20   5.088         0
+     g4dn.xlarge/torch-inductor-cuda       20   3.221         0
+     g4dn.xlarge/onnxrt-cuda               20   1.421         0
 
-2  Uncompiled                     2   0.152
+2  Uncompiled                               2   0.164
 
-3  Graph #2               
-     r6i.large/onnxrt-cpu        20   0.007         0
-     g5.xlarge/onnxrt-cuda       20   0.064         0
+3  Graph #2                         
+     r6i.large/torch-eager-cpu             20   0.026         0
+     g4dn.xlarge/torch-eager-cuda          20   0.102         0
+     g4dn.xlarge/torch-inductor-cuda       20   0.248         0
+     g4dn.xlarge/onnxrt-cuda               20   0.053         0
 
-4  Uncompiled                     2   0.096
------------------------------------------------------
-Total uncompiled code run time: 5.926 ms
+4  Uncompiled                               2   0.126
+---------------------------------------------------------------
+Total uncompiled code run time: 4.285 ms
 Total times (compiled + uncompiled) and on-demand cost per million inferences per backend:
-    r6i.large/onnxrt-cpu (Intel Ice Lake)  17.793ms  $0.62
-    g5.xlarge/onnxrt-cuda (Nvidia A10g)     7.126ms  $1.99
+    r6i.large/torch-eager-cpu (Intel Ice Lake)   39.013ms  $1.37
+    g4dn.xlarge/torch-eager-cuda (Nvidia T4)      9.475ms  $1.38
+    g4dn.xlarge/torch-inductor-cuda (Nvidia T4)   7.754ms  $1.13
+    g4dn.xlarge/onnxrt-cuda (Nvidia T4)           5.759ms  $0.84
 ```
 
 
@@ -395,7 +401,7 @@ PyTorch
 - torch-inductor-cpu
 - torch-inductor-cuda
 
-If no backends are specified while calling `remote_profile()`, then defaults are used,
+If no backends are specified while calling `remote_profile(backends=[...])`, then defaults are used,
 which are determined by the server. At the moment of writing, the default is
 `["r6i.large/torch-eager-cpu", "g4dn.xlarge/torch-eager-cuda", "g4dn.xlarge/torch-inductor-cuda"]`.
 

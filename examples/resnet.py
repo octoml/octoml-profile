@@ -1,9 +1,6 @@
-# This example requires the following packages to be installed
-# `pip install datasets`
-
 from datasets import load_dataset
 from transformers import AutoFeatureExtractor, ResNetForImageClassification
-from octoml_profile import accelerate, remote_profile, RemoteInferenceSession
+from octoml_profile import accelerate, remote_profile
 
 dataset = load_dataset("huggingface/cats-image")
 image = dataset["test"]["image"][0]
@@ -19,11 +16,7 @@ def run_model(inputs):
     return model(**inputs)
 
 
-session = RemoteInferenceSession(['g4dn.xlarge/onnxrt-cuda',
-                                  'g4dn.xlarge/onnxrt-tensorrt',
-                                  'g5.xlarge/onnxrt-cuda',
-                                  'g5.xlarge/onnxrt-tensorrt'])
-with remote_profile(session):
+with remote_profile():
     for i in range(3):
         result = run_model(inputs)
 

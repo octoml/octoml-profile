@@ -91,7 +91,7 @@ deployment goals without "throwing the model over the fence and back".
 
 ## Installation
 
-- Follow this [link](profiler.app.octoml.ai) to signup and generate an API token and set the token as the env var below.
+- <a href="https://profiler.app.octoml.ai/">Sign up</a> to generate an API token and set the token as the env var below.
   ```
   export OCTOML_PROFILE_API_TOKEN=<access token>
   ```

@@ -120,7 +120,8 @@ deployment goals without "throwing the model over the fence and back".
   pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
   ```
 
-  To use [dynamic shape](#dynamic-shapes), install torch-nightly instead.
+  To use [dynamic shape](#dynamic-shapes) or to pick up the latest improvements in PyTorch graph capture
+  technology, install torch-nightly instead.
   ```
   pip install --pre torch==2.1.0.dev20230307 torchaudio==2.0.0.dev20230307 torchvision==0.15.0.dev20230307 --index-url https://download.pytorch.org/whl/nightly/cpu
   ```

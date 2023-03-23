@@ -120,7 +120,8 @@ deployment goals without "throwing the model over the fence and back".
   pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
   ```
 
-  To use [dynamic shape](#dynamic-shapes), install torch-nightly instead.
+  To use [dynamic shape](#dynamic-shapes) or to pick up the latest improvements in PyTorch graph capture
+  technology, install torch-nightly instead.
   ```
   pip install --pre torch==2.1.0.dev20230307 torchaudio==2.0.0.dev20230307 torchvision==0.15.0.dev20230307 --index-url https://download.pytorch.org/whl/nightly/cpu
   ```
@@ -262,9 +263,11 @@ that has already been decorated with `@accelerate` or `@torch.compile`.
 ### The profile report
 
 By default, the `Profile` report table will show the linear sequence of subgraph segment runs.
+Note that `segment` indicates a subgraph run, and `subgraph` is a logical portion of the model.
 
-However, when too many subgraphs are run, subgraph exeuction segments are aggregated per
-subgraph, and a few subgraphs that have the highest aggregate runtimes are shown.
+However, when too many segments are run, we collapse the linear segment sequence into an
+abridged summary where only a few subgraphs that have the highest aggregate runtimes across
+their run segments are shown.
 For example, a generative encoder-decoder based model that produces a large number of
 run segments will display an abridged report displaying 
 **runtime by subgraph** instead of **runtime by segment** by default.

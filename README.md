@@ -262,9 +262,11 @@ that has already been decorated with `@accelerate` or `@torch.compile`.
 ### The profile report
 
 By default, the `Profile` report table will show the linear sequence of subgraph segment runs.
+Note that `segment` indicates a subgraph run, and `subgraph` is a logical portion of the model.
 
-However, when too many subgraphs are run, subgraph exeuction segments are aggregated per
-subgraph, and a few subgraphs that have the highest aggregate runtimes are shown.
+However, when too many segments are run, we collapse the linear segment sequence into an
+abridged summary where only a few subgraphs that have the highest aggregate runtimes across
+their run segments are shown.
 For example, a generative encoder-decoder based model that produces a large number of
 run segments will display an abridged report displaying 
 **runtime by subgraph** instead of **runtime by segment** by default.

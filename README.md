@@ -114,6 +114,10 @@ deployment goals without "throwing the model over the fence and back".
   conda create -n octoml python=3.8
   conda activate octoml
   ```
+- Ensure pip is up to date
+   ```
+   pip install --upgrade pip
+   ```
 
 - Install torch2.0 stable version
   ```

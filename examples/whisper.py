@@ -1,5 +1,5 @@
 # This example requires a torch nightly version `2.1.0.dev20230307`.
-# It further requires `pip install datasets soundfiles librosa`
+# It further requires `pip install datasets soundfile librosa`
 from datasets import load_dataset
 from transformers import WhisperProcessor, WhisperForConditionalGeneration
 from octoml_profile import remote_profile, accelerate

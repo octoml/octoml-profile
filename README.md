@@ -98,29 +98,26 @@ deployment goals without "throwing the model over the fence and back".
 
 - Create and activate a python virtual environment. Make sure that you are using python3.8.
 
-  [Linux]
+  [venv]
 
-  using venv:
   ```
   python3 -m venv env
   source env/bin/activate
   ```
+  or
 
-  [MacOS]
+  [conda]
 
-  using venv:
   ```
-  python3 -m venv env
-  source env/bin/activate
-  ```
-  using conda:
-  ```
-  # Instructions on installing conda on MacOS: https://docs.conda.io/projects/conda/en/latest/user-guide/install/macos.html
-  # Choose the Miniconda Installer for you Mac architecture.
-
   conda create -n octoml python=3.8
   conda activate octoml
   ```
+  if you are on Mac M1 and seeing `symbol not found in flat namespace '_CFRelease'`, it is likely that you created a `venv` with python installed by `conda`. Please make sure to deactivate any `conda` enviroment by:
+  ```
+  conda config --set auto_activate_base false
+  conda deactivate
+  ```
+  and use the system-shipped python on Mac M1 to create `venv`. Or follow the instructions above to create conda environment(s).
 - Ensure pip is up to date
    ```
    pip install --upgrade pip

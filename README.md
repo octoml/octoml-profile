@@ -112,7 +112,7 @@ deployment goals without "throwing the model over the fence and back".
   conda create -n octoml python=3.8
   conda activate octoml
   ```
-  if you are on Mac M1 and seeing `symbol not found in flat namespace '_CFRelease'`, it is likely that you created a `venv` with python installed by `conda`. Please make sure to deactivate any `conda` enviroment by:
+  if you are on Mac M1 and seeing `symbol not found in flat namespace '_CFRelease'`, it is likely that you created a `venv` with python installed by `conda`. Please make sure to deactivate any `conda` environment(s) by:
   ```
   conda config --set auto_activate_base false
   conda deactivate

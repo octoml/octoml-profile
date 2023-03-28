@@ -96,7 +96,7 @@ deployment goals without "throwing the model over the fence and back".
   export OCTOML_PROFILE_API_TOKEN=<access token>
   ```
 
-- Create and activate a python virtual environment. Make sure that you are using python3.8.
+- Create and activate a python virtual environment. `python==3.8` is recommended and tested on both `ubuntu` and `macOS`. `python==3.10.9` is tested on `macOS` with M1 chip.
 
   [venv]
 

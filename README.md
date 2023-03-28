@@ -99,13 +99,20 @@ deployment goals without "throwing the model over the fence and back".
 - Create and activate a python virtual environment. Make sure that you are using python3.8.
 
   [Linux]
-  using virtualenv:
+
+  using venv:
   ```
   python3 -m venv env
-  . env/bin/activate
+  source env/bin/activate
   ```
 
   [MacOS]
+
+  using venv:
+  ```
+  python3 -m venv env
+  source env/bin/activate
+  ```
   using conda:
   ```
   # Instructions on installing conda on MacOS: https://docs.conda.io/projects/conda/en/latest/user-guide/install/macos.html

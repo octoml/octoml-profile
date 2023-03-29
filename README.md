@@ -96,7 +96,7 @@ deployment goals without "throwing the model over the fence and back".
   export OCTOML_PROFILE_API_TOKEN=<access token>
   ```
 
-- Create and activate a python virtual environment. `python==3.8` is recommended and tested on both `ubuntu` and `macOS`. `python==3.10.9` is tested on `macOS` with M1 chip.
+- Create and activate a python virtual environment. `Python 3.8` is recommended and tested on both `Ubuntu` and `macOS`. `Python 3.10.9` is tested on `macOS` with Apple silicon.
 
   [venv]
 
@@ -112,12 +112,9 @@ deployment goals without "throwing the model over the fence and back".
   conda create -n octoml python=3.8
   conda activate octoml
   ```
-  if you are on Mac M1 and seeing `symbol not found in flat namespace '_CFRelease'`, it is likely that you created a `venv` with python installed by `conda`. Please make sure to deactivate any `conda` environment(s) by:
-  ```
-  conda config --set auto_activate_base false
-  conda deactivate
-  ```
-  and use the system-shipped python on Mac M1 to create `venv`. Or follow the instructions above to create conda environment(s).
+  if you are on Mac with Apple silicon and seeing `symbol not found in flat namespace '_CFRelease'`, it is likely that you created a `venv` with python installed by `conda`. 
+  
+  Please make sure to deactivate any `conda` environment(s) and use the system-shipped python on Mac M1 to create `venv`. Or follow the instructions above to create conda environment(s).
 - Ensure pip is up to date
    ```
    pip install --upgrade pip

@@ -112,9 +112,9 @@ deployment goals without "throwing the model over the fence and back".
   conda create -n octoml python=3.8
   conda activate octoml
   ```
-  if you are on Mac with Apple silicon and seeing `symbol not found in flat namespace '_CFRelease'`, it is likely that you created a `venv` with python installed by `conda`. 
+  if you are on macOS with Apple silicon and seeing `symbol not found in flat namespace '_CFRelease'`, it is likely that you created a `venv` with python installed by `conda`. 
   
-  Please make sure to deactivate any `conda` environment(s) and use the system-shipped python on Mac M1 to create `venv`. Or follow the instructions above to create conda environment(s).
+  Please make sure to deactivate any `conda` environment(s) and use the system-shipped python on macOS to create `venv`. Or follow the instructions above to create conda environment(s).
 - Ensure pip is up to date
    ```
    pip install --upgrade pip

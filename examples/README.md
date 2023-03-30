@@ -38,7 +38,7 @@ And now we can easily run this model on a variety of hardware and understand
 performance implications, all without having to worry about provisioning cloud
 instances, configuring software or deploying our code.
 
-You can use Dynamite directly within your application - whether it be a REST
+You can use the OctoML Profiler directly within your application - whether it be a REST
 API, CLI application or anything else - with your own data and tests.
 
 

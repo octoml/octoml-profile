@@ -5,8 +5,15 @@ designed to provide the **simplest experience** for assessing and optimizing
 the performance of PyTorch models on cloud hardware with state-of-the-art
 ML acceleration technology.
 
-It is suited for benchmarking PyTorch based AI applications before
-they are deployed into production.
+Benchmarking AI applications is a necessary step before deployment, as an
+optimally chosen hardware + runtime deployment strategy can reduce
+cloud costs by more than 10x over default solutions.
+
+Save yourself days of benchmarking setup by
+incorporating octoml-profile into your workstream.
+Follow [installation](#installation) and you'll be
+running a model on remote hardware within a few minutes --
+if not, file an issue.
 
 ### Documentation quick links
 
@@ -57,21 +64,21 @@ Total times (compiled + uncompiled) and on-demand cost per million inferences pe
 
 ## Why octoml-profile?
 
+- It only requires a few additional lines of python code.
+- octoml-profile is run entirely from your local development environment,
+no external configuration necessary.
+- octoml-profile provides both performance and cost insights within minutes.
+- octoml-profile benchmarks with the same data and workflow you use for training and experiment
+tracking, and doesn't require any of the manual effort usually required to trace or export a model.
+- octoml-profile supports a diversity of [hardware + state-of-the-art software backends](#supported-backends)
+- octoml-profile has experimental support for dynamic shapes
+
 Benchmarking deep learning models for cloud deployment is an intricate and
 tedious process. This challenge becomes more significant as the boundary
-between model and code continues to blur. As we witness in the
-rise of generative models and the increasing popularity of PyTorch, exporting
+between model and code continues to blur. Exporting
 models from code and selecting the optimal hardware deployment
 platform and inference backend becomes a daunting task even for expert ML engineers.
 
-With octoml-profile, you can easily run performance/cost measurements on a wide
-variety of different hardware and apply state-of-the-art ML acceleration
-techniques, all from your development machine, using the same data and workflow used for
-training and experiment tracking, without tracing or exporting the model!
-
-Apply just a few code changes, run your code locally, and
-you instantly get performance feedback on your model's compute-intensive
-tensor operations
 
 - on each hardware instance type
 - with automatic application of state-of-the-art ML acceleration technologies
@@ -125,7 +132,7 @@ deployment goals without "throwing the model over the fence and back".
   pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
   ```
 
-  To use [dynamic shape](#dynamic-shapes) or to pick up the latest improvements in PyTorch graph capture
+  To use [dynamic shapes](#dynamic-shapes) or to pick up the latest improvements in PyTorch graph capture
   technology, install torch-nightly instead.
   ```
   pip install --pre torch==2.1.0.dev20230307 torchaudio==2.0.0.dev20230307 torchvision==0.15.0.dev20230307 --index-url https://download.pytorch.org/whl/nightly/cpu

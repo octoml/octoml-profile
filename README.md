@@ -69,32 +69,22 @@ Total times (compiled + uncompiled) and on-demand cost per million inferences pe
 no external configuration necessary.
 - octoml-profile provides both performance and cost insights within minutes.
 - octoml-profile benchmarks with the same data and workflow you use for training and experiment
-tracking, and doesn't require any of the manual effort usually required to trace or export a model.
+tracking.
+- The line between code and model is increasingly blurring, and octoml-profile doesn't require any of the manual effort usually required to trace or export a model.
 - octoml-profile supports a diversity of [hardware + state-of-the-art software backends](#supported-backends)
-- octoml-profile has experimental support for dynamic shapes
-
-Benchmarking deep learning models for cloud deployment is an intricate and
-tedious process. This challenge becomes more significant as the boundary
-between model and code continues to blur. Exporting
-models from code and selecting the optimal hardware deployment
-platform and inference backend becomes a daunting task even for expert ML engineers.
-
-
-- on each hardware instance type
-- with automatic application of state-of-the-art ML acceleration technologies
-- your model's data shapes and types can vary
-
-but without the burden of
-
-- exporting the models and stitching them back with pre/post processing code
-- provisioning the hardware
-- preparing the hardware specific dependencies, i.e. the version of PyTorch, Cuda, TensorRT etc.
-- sending the model and data to each hardware and running the benchmarking script
-
-This agile loop enables anyone familiar with PyTorch to rapidly iterate over
+- octoml-profile has experimental support for [dynamic shapes](#dynamic-shapes), a necessary
+characteristic to support the latest trends in generative models.
+- octoml-profile absolves the need for time-consuming, tedious tasks like: 
+  - exporting models and stitching them back with pre/post processing code
+  - provisioning hardware
+  - preparing hardware specific dependencies, i.e. specific versions of PyTorch, Cuda, TensorRT etc.
+  - sending the model and data to each hardware and running the benchmarking script
+- octoml-profile is designed to enable anyone familiar with PyTorch to rapidly iterate over
 their model and the choice of hardware / acceleration technique to meet their
 deployment goals without "throwing the model over the fence and back".
 
+In other words, use octoml-profile if you like speed, ease of use, and if you don't want
+to spend days manually setting up infrastructure for benchmarking.
 
 ## Installation
 

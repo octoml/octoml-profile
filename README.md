@@ -176,8 +176,7 @@ to spend days manually setting up infrastructure for benchmarking.
   remotely 10 times. However, the result of the first remote run is
   discarded because compilation is triggered.
 
-  To understand what's happening behind the scenes, read on. To see
-  more examples, see [examples/](examples).
+  To see more examples, see [examples/](examples).
 
 
 ### Issues with installation

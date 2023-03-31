@@ -102,87 +102,85 @@ to spend days manually setting up infrastructure for benchmarking.
    pip install "octoml-profile>=0.2.0"
    ```
 
-You've completed installation! (If you have trouble, see [issues with installation](#issues-with-installation))
-
-<br>
+  You've completed installation! (If you have trouble, see [issues with installation](#issues-with-installation))
 
 - Next, try running this very simple example that shows how to integrate octoml-profile into your model code.
 
-```python
-import torch
-import torch.nn.functional as F
-from torch.nn import Linear, ReLU, Sequential
-from octoml_profile import accelerate, remote_profile
+  ```python
+  import torch
+  import torch.nn.functional as F
+  from torch.nn import Linear, ReLU, Sequential
+  from octoml_profile import accelerate, remote_profile
 
-model = Sequential(Linear(100, 200), ReLU(), Linear(200, 10))
+  model = Sequential(Linear(100, 200), ReLU(), Linear(200, 10))
 
-@accelerate
-def predict(x: torch.Tensor):
-    y = model(x)
-    z = F.softmax(y, dim=-1)
-    return z
+  @accelerate
+  def predict(x: torch.Tensor):
+      y = model(x)
+      z = F.softmax(y, dim=-1)
+      return z
 
-# Alternatively you can also directly use `accelerate`
-# on a model, e.g. `predict = accelerate(model)` which will leave the
-# softmax out of remote execution
+  # Alternatively you can also directly use `accelerate`
+  # on a model, e.g. `predict = accelerate(model)` which will leave the
+  # softmax out of remote execution
 
-with remote_profile():
-    for i in range(10):
-        x = torch.randn(1, 100)
-        predict(x)
-```
+  with remote_profile():
+      for i in range(10):
+          x = torch.randn(1, 100)
+          predict(x)
+  ```
 
 - The first time you run this, you'll be prompted to supply your API key.  
 
-```
-    ,-""-.
-   /      \    Welcome to OctoML Profiler!
-  :        ;
-   \      /    It looks like you don't have an access token configured.
-    `.  .'     Please go to https://profiler.app.octoml.ai/ to generate one
-  '._.'`._.'   and then paste it here.
+  ```
+      ,-""-.
+    /      \    Welcome to OctoML Profiler!
+    :        ;
+    \      /    It looks like you don't have an access token configured.
+      `.  .'     Please go to https://profiler.app.octoml.ai/ to generate one
+    '._.'`._.'   and then paste it here.
 
-Access token: 
+  Access token: 
 
-```
+  ```
 
 - Once you've provided credentials, running this results in the following output that shows  times of the function being executed remotely on each backend.
 
-```
-Profile 1/1 ran 9 times with 10 repeats per call:
-   Segment                            Samples  Avg ms  Failures
-===============================================================
-0  Uncompiled                               9   0.020
+  ```
+  Profile 1/1 ran 9 times with 10 repeats per call:
+    Segment                            Samples  Avg ms  Failures
+  ===============================================================
+  0  Uncompiled                               9   0.020
 
-1  Graph #1                         
-     r6i.large/torch-eager-cpu             90   0.037         0
-     g4dn.xlarge/torch-eager-cuda          90   0.135         0
-     g4dn.xlarge/torch-inductor-cuda       90   0.236         0
+  1  Graph #1                         
+      r6i.large/torch-eager-cpu             90   0.037         0
+      g4dn.xlarge/torch-eager-cuda          90   0.135         0
+      g4dn.xlarge/torch-inductor-cuda       90   0.236         0
 
-2  Uncompiled                               9   0.010
----------------------------------------------------------------
-Total uncompiled code run time: 0.029 ms
-Total times (compiled + uncompiled) and on-demand cost per million inferences per backend:
-    r6i.large/torch-eager-cpu (Intel Ice Lake)   0.066ms  $0.00
-    g4dn.xlarge/torch-eager-cuda (Nvidia T4)     0.165ms  $0.02
-    g4dn.xlarge/torch-inductor-cuda (Nvidia T4)  0.265ms  $0.04  
-```
+  2  Uncompiled                               9   0.010
+  ---------------------------------------------------------------
+  Total uncompiled code run time: 0.029 ms
+  Total times (compiled + uncompiled) and on-demand cost per million inferences per backend:
+      r6i.large/torch-eager-cpu (Intel Ice Lake)   0.066ms  $0.00
+      g4dn.xlarge/torch-eager-cuda (Nvidia T4)     0.165ms  $0.02
+      g4dn.xlarge/torch-inductor-cuda (Nvidia T4)  0.265ms  $0.04  
+  ```
 
-You can think of `Graph #1` as the computation graph which captures
-`model` plus `softmax` in the `predict` function. See
-the [Uncompiled Segments](#uncompiled-segments) for more information
-on the uncompiled blocks.
+  You can think of `Graph #1` as the computation graph which captures
+  `model` plus `softmax` in the `predict` function. See
+  the [Uncompiled Segments](#uncompiled-segments) for more information
+  on the uncompiled blocks.
 
-`Graph #1` shows 90 runs because the `for loop` runs the
-`predict` function 10 times. On each loop iteration the model is evaluated
-remotely 10 times. However, the result of the first remote run is
-discarded because compilation is triggered.
+  `Graph #1` shows 90 runs because the `for loop` runs the
+  `predict` function 10 times. On each loop iteration the model is evaluated
+  remotely 10 times. However, the result of the first remote run is
+  discarded because compilation is triggered.
 
-To understand what's happening behind the scenes, read on. To see
-more examples, see [examples/](examples).
+  To understand what's happening behind the scenes, read on. To see
+  more examples, see [examples/](examples).
 
 
-##Issues with installation
+### Issues with installation
 
  - If you are on macOS with Apple silicon and seeing `symbol not found in flat namespace '_CFRelease'`, it is likely that you created a `venv` with python installed by `conda`. Please make sure to deactivate any `conda` environment(s) and use the system-shipped python on macOS to create `venv`. Or follow the instructions below to create a conda environment.
 
@@ -200,6 +198,7 @@ more examples, see [examples/](examples).
   ```
 
 - For any other problems, please file a github issue.
+
 
 ## Behind the scenes
 

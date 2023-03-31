@@ -5,8 +5,15 @@ designed to provide the **simplest experience** for assessing and optimizing
 the performance of PyTorch models on cloud hardware with state-of-the-art
 ML acceleration technology.
 
-It is suited for benchmarking PyTorch based AI applications before
-they are deployed into production.
+Benchmarking AI applications is a necessary step before deployment, as an
+optimally chosen hardware + runtime deployment strategy can reduce
+cloud costs by more than 10x over default solutions.
+
+Save yourself days of benchmarking setup by
+incorporating octoml-profile into your workstream.
+Follow [installation](#installation) and you'll be
+running a model on remote hardware within a few minutes --
+if not, file an issue.
 
 ### Documentation quick links
 
@@ -57,37 +64,27 @@ Total times (compiled + uncompiled) and on-demand cost per million inferences pe
 
 ## Why octoml-profile?
 
-Benchmarking deep learning models for cloud deployment is an intricate and
-tedious process. This challenge becomes more significant as the boundary
-between model and code continues to blur. As we witness in the
-rise of generative models and the increasing popularity of PyTorch, exporting
-models from code and selecting the optimal hardware deployment
-platform and inference backend becomes a daunting task even for expert ML engineers.
-
-With octoml-profile, you can easily run performance/cost measurements on a wide
-variety of different hardware and apply state-of-the-art ML acceleration
-techniques, all from your development machine, using the same data and workflow used for
-training and experiment tracking, without tracing or exporting the model!
-
-Apply just a few code changes, run your code locally, and
-you instantly get performance feedback on your model's compute-intensive
-tensor operations
-
-- on each hardware instance type
-- with automatic application of state-of-the-art ML acceleration technologies
-- your model's data shapes and types can vary
-
-but without the burden of
-
-- exporting the models and stitching them back with pre/post processing code
-- provisioning the hardware
-- preparing the hardware specific dependencies, i.e. the version of PyTorch, Cuda, TensorRT etc.
-- sending the model and data to each hardware and running the benchmarking script
-
-This agile loop enables anyone familiar with PyTorch to rapidly iterate over
+- It only requires a few additional lines of python code.
+- octoml-profile is run entirely from your local development environment,
+no external configuration necessary.
+- octoml-profile provides both performance and cost insights within minutes.
+- octoml-profile benchmarks with the same data and workflow you use for training and experiment
+tracking.
+- The line between code and model is increasingly blurring, and octoml-profile doesn't require any of the manual effort usually required to trace or export a model.
+- octoml-profile supports a diversity of [hardware + state-of-the-art software backends](#supported-backends)
+- octoml-profile has experimental support for [dynamic shapes](#dynamic-shapes), a necessary
+characteristic to support the latest trends in generative models.
+- octoml-profile absolves the need for time-consuming, tedious tasks like: 
+  - exporting models and stitching them back with pre/post processing code
+  - provisioning hardware
+  - preparing hardware specific dependencies, i.e. specific versions of PyTorch, Cuda, TensorRT etc.
+  - sending the model and data to each hardware and running the benchmarking script
+- octoml-profile is designed to enable anyone familiar with PyTorch to rapidly iterate over
 their model and the choice of hardware / acceleration technique to meet their
 deployment goals without "throwing the model over the fence and back".
 
+In other words, use octoml-profile if you like speed, ease of use, and if you don't want
+to spend days manually setting up infrastructure for benchmarking.
 
 ## Installation
 
@@ -98,44 +95,35 @@ deployment goals without "throwing the model over the fence and back".
 
 - Create and activate a python virtual environment. `Python 3.8` is recommended and tested on both `Ubuntu` and `macOS`. `Python 3.10.9` is tested on `macOS` with Apple silicon.
 
-  [venv]
-
   ```
   python3 -m venv env
   source env/bin/activate
   ```
-  or
-
-  [conda]
-
-  ```
-  conda create -n octoml python=3.8
-  conda activate octoml
-  ```
-  if you are on macOS with Apple silicon and seeing `symbol not found in flat namespace '_CFRelease'`, it is likely that you created a `venv` with python installed by `conda`. 
-  
-  Please make sure to deactivate any `conda` environment(s) and use the system-shipped python on macOS to create `venv`. Or follow the instructions above to create conda environment(s).
-- Ensure pip is up to date
+- Install dependencies
    ```
    pip install --upgrade pip
+   pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
+   pip install "octoml-profile>=0.2.0"
    ```
 
-- Install torch2.0 stable version
-  ```
-  pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
-  ```
+You've completed installation! Next, run the code in [Getting Started](#getting-started).
 
-  To use [dynamic shape](#dynamic-shapes) or to pick up the latest improvements in PyTorch graph capture
+Issues with installation
+
+ - If you are on macOS with Apple silicon and seeing `symbol not found in flat namespace '_CFRelease'`, it is likely that you created a `venv` with python installed by `conda`. Please make sure to deactivate any `conda` environment(s) and use the system-shipped python on macOS to create `venv`. Or follow the instructions below to create a conda environment.
+
+    ```
+    conda create -n octoml python=3.8
+    conda activate octoml
+    ```
+
+- For any other problems, please file a github issue.
+
+Advanced: to use [dynamic shapes](#dynamic-shapes) or to pick up the latest improvements in PyTorch graph capture
   technology, install torch-nightly instead.
   ```
   pip install --pre torch==2.1.0.dev20230307 torchaudio==2.0.0.dev20230307 torchvision==0.15.0.dev20230307 --index-url https://download.pytorch.org/whl/nightly/cpu
   ```
-
-- Install octoml-profile
-  ```
-  pip install "octoml-profile>=0.2.0"
-  ```
-
 
 ## Getting Started
 

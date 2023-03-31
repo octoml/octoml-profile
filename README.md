@@ -87,7 +87,6 @@ to spend days manually setting up infrastructure for benchmarking.
 
 
 ## Installation and Getting Started
-
 - <a href="https://profiler.app.octoml.ai/">Sign up</a> so that you can generate an API token when prompted.
 - Create and activate a python virtual environment. `Python 3.8` is recommended and tested on both `Ubuntu` and `macOS`. `Python 3.10.9` is tested on `macOS` with Apple silicon.
 

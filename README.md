@@ -11,7 +11,7 @@ cloud costs by more than 10x over default solutions.
 
 Save yourself days of benchmarking setup by
 incorporating octoml-profile into your workstream.
-Follow [installation](#installation) and you'll be
+Follow [installation](#installation-and-getting-started) and you'll be
 running a model on remote hardware within a few minutes --
 if not, file an issue.
 

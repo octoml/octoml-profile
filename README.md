@@ -18,8 +18,7 @@ if not, file an issue.
 ### Documentation quick links
 
 * [Why octoml-profile?](#why-octoml-profile)
-* [Installation](#installation)
-* [Getting started](#getting-started)
+* [Installation and Getting Started](#installation-and-getting-started)
 * [Behind the scenes](#behind-the-scenes)
 * [Data privacy](#data-privacy)
 * [Known issues](#known-issues)
@@ -86,13 +85,10 @@ deployment goals without "throwing the model over the fence and back".
 In other words, use octoml-profile if you like speed, ease of use, and if you don't want
 to spend days manually setting up infrastructure for benchmarking.
 
-## Installation
 
-- <a href="https://profiler.app.octoml.ai/">Sign up</a> to generate an API token and set the token as the env var below.
-  ```
-  export OCTOML_PROFILE_API_TOKEN=<access token>
-  ```
+## Installation and Getting Started
 
+- <a href="https://profiler.app.octoml.ai/">Sign up</a> so that you can generate an API token when prompted.
 - Create and activate a python virtual environment. `Python 3.8` is recommended and tested on both `Ubuntu` and `macOS`. `Python 3.10.9` is tested on `macOS` with Apple silicon.
 
   ```
@@ -106,31 +102,11 @@ to spend days manually setting up infrastructure for benchmarking.
    pip install "octoml-profile>=0.2.0"
    ```
 
-You've completed installation! Next, run the code in [Getting Started](#getting-started).
+You've completed installation! (If you have trouble, see [issues with installation](#issues-with-installation))
 
-Issues with installation
+<br>
 
- - If you are on macOS with Apple silicon and seeing `symbol not found in flat namespace '_CFRelease'`, it is likely that you created a `venv` with python installed by `conda`. Please make sure to deactivate any `conda` environment(s) and use the system-shipped python on macOS to create `venv`. Or follow the instructions below to create a conda environment.
-
-    ```
-    conda create -n octoml python=3.8
-    conda activate octoml
-    ```
-
-- For any other problems, please file a github issue.
-
-Advanced: to use [dynamic shapes](#dynamic-shapes) or to pick up the latest improvements in PyTorch graph capture
-  technology, install torch-nightly instead.
-  ```
-  pip install --pre torch==2.1.0.dev20230307 torchaudio==2.0.0.dev20230307 torchvision==0.15.0.dev20230307 --index-url https://download.pytorch.org/whl/nightly/cpu
-  ```
-
-## Getting Started
-
-All example code, including applications from `transformers`, can be found at [examples/](examples).
-
-Below is a very simple example that shows how to integrate octoml-profile
-into your model code.
+- Next, try running this very simple example that shows how to integrate octoml-profile into your model code.
 
 ```python
 import torch
@@ -156,8 +132,22 @@ with remote_profile():
         predict(x)
 ```
 
-Running this program results in the following output that shows 
-times of the function being executed remotely on each backend.
+- The first time you run this, you'll be prompted to supply your API key.  
+
+```
+    ,-""-.
+   /      \    Welcome to OctoML Profiler!
+  :        ;
+   \      /    It looks like you don't have an access token configured.
+    `.  .'     Please go to https://profiler.app.octoml.ai/ to generate one
+  '._.'`._.'   and then paste it here.
+
+Access token: 
+
+```
+
+- Once you've provided credentials, running this results in the following output that shows  times of the function being executed remotely on each backend.
+
 ```
 Profile 1/1 ran 9 times with 10 repeats per call:
    Segment                            Samples  Avg ms  Failures
@@ -175,8 +165,9 @@ Total uncompiled code run time: 0.029 ms
 Total times (compiled + uncompiled) and on-demand cost per million inferences per backend:
     r6i.large/torch-eager-cpu (Intel Ice Lake)   0.066ms  $0.00
     g4dn.xlarge/torch-eager-cuda (Nvidia T4)     0.165ms  $0.02
-    g4dn.xlarge/torch-inductor-cuda (Nvidia T4)  0.265ms  $0.04
+    g4dn.xlarge/torch-inductor-cuda (Nvidia T4)  0.265ms  $0.04  
 ```
+
 You can think of `Graph #1` as the computation graph which captures
 `model` plus `softmax` in the `predict` function. See
 the [Uncompiled Segments](#uncompiled-segments) for more information
@@ -189,6 +180,26 @@ discarded because compilation is triggered.
 
 To understand what's happening behind the scenes, read on. To see
 more examples, see [examples/](examples).
+
+
+##Issues with installation
+
+ - If you are on macOS with Apple silicon and seeing `symbol not found in flat namespace '_CFRelease'`, it is likely that you created a `venv` with python installed by `conda`. Please make sure to deactivate any `conda` environment(s) and use the system-shipped python on macOS to create `venv`. Or follow the instructions below to create a conda environment.
+
+    ```
+    conda create -n octoml python=3.8
+    conda activate octoml
+    ```
+
+-  If you see a version conflict, please install the pip dependencies above with `--force-reinstall`.
+
+- To use [dynamic shapes](#dynamic-shapes) or to pick up the latest improvements in PyTorch graph capture
+  technology, install torch-nightly instead.
+  ```
+  pip install --pre torch==2.1.0.dev20230307 torchaudio==2.0.0.dev20230307 torchvision==0.15.0.dev20230307 --index-url https://download.pytorch.org/whl/nightly/cpu
+  ```
+
+- For any other problems, please file a github issue.
 
 ## Behind the scenes
 

@@ -95,44 +95,35 @@ to spend days manually setting up infrastructure for benchmarking.
 
 - Create and activate a python virtual environment. `Python 3.8` is recommended and tested on both `Ubuntu` and `macOS`. `Python 3.10.9` is tested on `macOS` with Apple silicon.
 
-  [venv]
-
   ```
   python3 -m venv env
   source env/bin/activate
   ```
-  or
-
-  [conda]
-
-  ```
-  conda create -n octoml python=3.8
-  conda activate octoml
-  ```
-  if you are on macOS with Apple silicon and seeing `symbol not found in flat namespace '_CFRelease'`, it is likely that you created a `venv` with python installed by `conda`. 
-  
-  Please make sure to deactivate any `conda` environment(s) and use the system-shipped python on macOS to create `venv`. Or follow the instructions above to create conda environment(s).
-- Ensure pip is up to date
+- Install dependencies
    ```
    pip install --upgrade pip
+   pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
+   pip install "octoml-profile>=0.2.0"
    ```
 
-- Install torch2.0 stable version
-  ```
-  pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
-  ```
+You've completed installation! Next, run the code in [Getting Started](#getting-started).
 
-  To use [dynamic shapes](#dynamic-shapes) or to pick up the latest improvements in PyTorch graph capture
+Issues with installation
+
+ - If you are on macOS with Apple silicon and seeing `symbol not found in flat namespace '_CFRelease'`, it is likely that you created a `venv` with python installed by `conda`. Please make sure to deactivate any `conda` environment(s) and use the system-shipped python on macOS to create `venv`. Or follow the instructions below to create a conda environment.
+
+    ```
+    conda create -n octoml python=3.8
+    conda activate octoml
+    ```
+
+- For any other problems, please file a github issue.
+
+Advanced: to use [dynamic shapes](#dynamic-shapes) or to pick up the latest improvements in PyTorch graph capture
   technology, install torch-nightly instead.
   ```
   pip install --pre torch==2.1.0.dev20230307 torchaudio==2.0.0.dev20230307 torchvision==0.15.0.dev20230307 --index-url https://download.pytorch.org/whl/nightly/cpu
   ```
-
-- Install octoml-profile
-  ```
-  pip install "octoml-profile>=0.2.0"
-  ```
-
 
 ## Getting Started
 

@@ -213,7 +213,7 @@ to spend days manually setting up infrastructure for benchmarking.
 In the example above, we first decorate the `predict` function with the
 `@accelerate` decorator. The behavior of this decorator depends on the context.
 By default, it behaves like `@torch.compile`:
-[Torch Dynamo](https://pytorch.org/tutorials/intermediate/dynamo_tutorial.html) is used
+[TorchDynamo](https://pytorch.org/docs/stable/dynamo/index.html) is used
 to extract one or more computation graphs, optimize them, and replace the bytecode
 inside the function with the optimized version. 
 
@@ -477,8 +477,8 @@ uncompiled time is summed up and add to the estimated total time (compiled and
 uncompiled).
 
 To print graph breaks and understand more of what TorchDynamo is doing under the hood, see
-the [dynamo.explain](https://pytorch.org/tutorials/intermediate/dynamo_tutorial.html#torchdynamo-and-fx-graphs)
-and
+the [TorchDynamo Deeper Dive](https://pytorch.org/docs/stable/dynamo/deep-dive.html), 
+[Torch.FX](https://pytorch.org/docs/stable/fx.html) and
 [PyTorch
 Troubleshooting](https://pytorch.org/docs/master/dynamo/troubleshooting.html#torchdynamo-troubleshooting)
 pages.

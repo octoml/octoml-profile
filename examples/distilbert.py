@@ -2,8 +2,9 @@ from transformers import DistilBertTokenizer, DistilBertForSequenceClassificatio
 from octoml_profile import accelerate, remote_profile
 
 
-tokenizer = DistilBertTokenizer.from_pretrained("distilbert-base-uncased")
-model = DistilBertForSequenceClassification.from_pretrained("distilbert-base-uncased")
+model_id = "distilbert-base-uncased-finetuned-sst-2-english"
+tokenizer = DistilBertTokenizer.from_pretrained(model_id)
+model = DistilBertForSequenceClassification.from_pretrained(model_id)
 
 
 @accelerate

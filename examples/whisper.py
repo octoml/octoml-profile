@@ -1,5 +1,6 @@
-# This example requires a torch nightly version `2.1.0.dev20230307`.
+# This example requires torch nightly (see README.md for recommended version)
 # It further requires `pip install datasets soundfile librosa`
+# Please run `pip install -r requirements.txt`
 from datasets import load_dataset
 from transformers import WhisperProcessor, WhisperForConditionalGeneration
 from octoml_profile import remote_profile, accelerate
@@ -26,7 +27,8 @@ def predict(sample):
     return transcription
 
 
-with remote_profile(backends=["g4dn.xlarge/onnxrt-cuda", "r6i.large/onnxrt-cpu"]):
+with remote_profile(backends=["g4dn.xlarge/onnxrt-cuda", "r6i.large/onnxrt-cpu"],
+                    num_repeats=1):
     for _ in range(3):
         text = predict(sample)
         print(text)

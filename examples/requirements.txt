@@ -1,0 +1,7 @@
+transformers==4.27.4
+diffusers==0.14.0
+sentencepiece==0.1.97
+
+librosa==0.10.0
+datasets==2.7.1
+soundfile==0.12.1
